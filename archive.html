@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Archive — PasteGold</title>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="scripts/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="ambient-bg">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <canvas id="grain"></canvas>
+</div>
+
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <img src="icons/logo.svg" alt="PasteGold Logo" class="logo-icon" />
+    <span>PasteGold</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn">
+      <img src="icons/plus.svg" alt="" class="btn-icon" />
+      New Paste
+    </a>
+    <a href="archive.html" class="nav-btn active">
+      <img src="icons/archive.svg" alt="" class="btn-icon" />
+      Archive
+    </a>
+  </div>
+  <button class="sound-btn" id="soundBtn" title="Toggle ambient sound">
+    <img src="icons/sound-on.svg" alt="Sound" id="soundIcon" class="btn-icon" />
+  </button>
+</nav>
+
+<main class="archive-section">
+  <div class="archive-header">
+    <h1 class="section-title">
+      <img src="icons/archive.svg" alt="" class="title-icon" />
+      Archive
+    </h1>
+    <p class="section-sub">Semua paste yang pernah kamu simpan di perangkat ini.</p>
+    <div class="archive-controls">
+      <div class="search-wrap">
+        <img src="icons/search.svg" alt="" class="search-icon" />
+        <input type="text" id="searchInput" placeholder="Cari paste..." class="search-input" oninput="filterPastes()" />
+      </div>
+      <button class="btn-danger" onclick="clearAll()">
+        <img src="icons/trash.svg" alt="" class="btn-icon" />
+        Hapus Semua
+      </button>
+    </div>
+  </div>
+
+  <div class="paste-grid" id="pasteGrid">
+    <!-- Dynamically populated -->
+  </div>
+
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <img src="images/empty.svg" alt="Kosong" class="empty-img" />
+    <h3>Belum ada paste</h3>
+    <p>Buat paste pertama kamu sekarang!</p>
+    <a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+      <img src="icons/plus.svg" alt="" class="btn-icon" />
+      Buat Paste
+    </a>
+  </div>
+</main>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal-card modal-large">
+    <div class="modal-header">
+      <h2 id="viewTitle">Paste Title</h2>
+      <button class="modal-close" onclick="closeViewModal()">
+        <img src="icons/x.svg" alt="" class="btn-icon" />
+      </button>
+    </div>
+    <div class="view-meta" id="viewMeta"></div>
+    <div class="view-code-wrap">
+      <div class="line-nums" id="viewLineNums">1</div>
+      <pre id="viewCode" class="view-code"></pre>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="copyViewCode()">
+        <img src="icons/copy.svg" alt="" class="btn-icon" />
+        Salin Kode
+      </button>
+      <button class="btn-secondary" onclick="copyViewLink()">
+        <img src="icons/link.svg" alt="" class="btn-icon" />
+        Salin Link
+      </button>
+      <button class="btn-danger-sm" onclick="deleteCurrent()">
+        <img src="icons/trash.svg" alt="" class="btn-icon" />
+        Hapus
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <img src="icons/logo.svg" alt="" class="footer-logo" />
+    <span>PasteGold &copy; 2025 — Built with ✦</span>
+    <a href="index.html" class="footer-link">Buat Paste</a>
+  </div>
+</footer>
+
+<audio id="ambientAudio" loop>
+  <source src="music/ambient.mp3" type="audio/mpeg" />
+</audio>
+
+<script src="scripts/app.js"></script>
+<script src="scripts/archive.js"></script>
+</body>
+</html>

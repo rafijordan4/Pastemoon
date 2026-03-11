@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PasteGold — Share Code. Beautifully.</title>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="scripts/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- AMBIENT BG -->
+<div class="ambient-bg">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <canvas id="grain"></canvas>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <img src="icons/logo.svg" alt="PasteGold Logo" class="logo-icon" />
+    <span>PasteGold</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn active">
+      <img src="icons/plus.svg" alt="" class="btn-icon" />
+      New Paste
+    </a>
+    <a href="archive.html" class="nav-btn">
+      <img src="icons/archive.svg" alt="" class="btn-icon" />
+      Archive
+    </a>
+  </div>
+  <button class="sound-btn" id="soundBtn" title="Toggle ambient sound">
+    <img src="icons/sound-on.svg" alt="Sound" id="soundIcon" class="btn-icon" />
+  </button>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-text">
+    <h1 class="hero-title">Share Code.<br/><em>Beautifully.</em></h1>
+    <p class="hero-sub">Paste, simpan, dan bagikan snippet kode dengan link instan. Tanpa ribet.</p>
+  </div>
+  <img src="images/hero-art.svg" alt="Hero Art" class="hero-art" />
+</header>
+
+<!-- MAIN EDITOR -->
+<main class="editor-section">
+  <div class="editor-card">
+    <!-- Top bar -->
+    <div class="editor-topbar">
+      <div class="dot-row">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <input type="text" id="pasteTitle" placeholder="Nama Proyek / Judul Paste..." class="title-input" maxlength="80" />
+      <select id="langSelect" class="lang-select">
+        <option value="plaintext">Plain Text</option>
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="json">JSON</option>
+        <option value="bash">Bash</option>
+        <option value="lua">Lua</option>
+        <option value="gdscript">GDScript</option>
+        <option value="java">Java</option>
+        <option value="cpp">C++</option>
+        <option value="php">PHP</option>
+      </select>
+    </div>
+
+    <!-- Textarea -->
+    <div class="editor-body">
+      <div class="line-nums" id="lineNums">1</div>
+      <textarea id="codeEditor" spellcheck="false" placeholder="// Tempelkan kode atau teks kamu di sini..."></textarea>
+    </div>
+
+    <!-- Options row -->
+    <div class="editor-options">
+      <div class="opt-group">
+        <label class="opt-label">
+          <img src="icons/clock.svg" alt="" class="btn-icon" />
+          Kedaluwarsa
+        </label>
+        <select id="expiry" class="opt-select">
+          <option value="never">Tidak Pernah</option>
+          <option value="1h">1 Jam</option>
+          <option value="1d">1 Hari</option>
+          <option value="7d">7 Hari</option>
+          <option value="30d">30 Hari</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <label class="opt-label">
+          <img src="icons/eye.svg" alt="" class="btn-icon" />
+          Visibilitas
+        </label>
+        <select id="visibility" class="opt-select">
+          <option value="public">Publik</option>
+          <option value="private">Privat</option>
+          <option value="unlisted">Tersembunyi</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <label class="opt-label">
+          <img src="icons/tag.svg" alt="" class="btn-icon" />
+          Tag
+        </label>
+        <input type="text" id="tagInput" placeholder="tag1, tag2..." class="opt-input" />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="editor-actions">
+      <button class="btn-secondary" onclick="clearEditor()">
+        <img src="icons/trash.svg" alt="" class="btn-icon" />
+        Hapus
+      </button>
+      <button class="btn-primary" onclick="savePaste()">
+        <img src="icons/save.svg" alt="" class="btn-icon" />
+        Simpan & Dapatkan Link
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- RESULT TOAST -->
+<div class="result-toast" id="resultToast">
+  <div class="toast-inner">
+    <img src="icons/link.svg" alt="" class="btn-icon" />
+    <span id="toastMsg">Link tersalin!</span>
+    <button class="toast-close" onclick="closeToast()">
+      <img src="icons/x.svg" alt="" class="btn-icon" />
+    </button>
+  </div>
+</div>
+
+<!-- LINK MODAL -->
+<div class="modal-overlay" id="linkModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <img src="icons/check-circle.svg" alt="" class="modal-icon" />
+      <h2>Paste Tersimpan!</h2>
+      <button class="modal-close" onclick="closeModal()">
+        <img src="icons/x.svg" alt="" class="btn-icon" />
+      </button>
+    </div>
+    <p class="modal-sub">Bagikan link proyek kamu dengan siapa saja.</p>
+    <div class="link-display">
+      <code id="generatedLink">https://pastegold.app/p/abc123</code>
+      <button class="copy-btn" onclick="copyLink()" id="copyBtn">
+        <img src="icons/copy.svg" alt="" class="btn-icon" />
+        Salin
+      </button>
+    </div>
+    <div class="modal-share">
+      <span class="share-label">Bagikan:</span>
+      <button class="share-pill" onclick="shareWA()">
+        <img src="icons/share.svg" alt="" class="btn-icon" />
+        WhatsApp
+      </button>
+      <button class="share-pill" onclick="shareTwitter()">
+        <img src="icons/share.svg" alt="" class="btn-icon" />
+        Twitter/X
+      </button>
+      <button class="share-pill" onclick="copyRaw()">
+        <img src="icons/code.svg" alt="" class="btn-icon" />
+        Raw Link
+      </button>
+    </div>
+    <div class="modal-meta" id="modalMeta"></div>
+    <button class="btn-primary full-w" onclick="closeModal()">
+      <img src="icons/plus.svg" alt="" class="btn-icon" />
+      Buat Paste Baru
+    </button>
+  </div>
+</div>
+
+<!-- ARCHIVE PAGE (hidden by default, handled in archive.html) -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <img src="icons/logo.svg" alt="" class="footer-logo" />
+    <span>PasteGold &copy; 2025 — Built with ✦</span>
+    <a href="archive.html" class="footer-link">Archive</a>
+  </div>
+</footer>
+
+<audio id="ambientAudio" loop>
+  <source src="music/ambient.mp3" type="audio/mpeg" />
+</audio>
+
+<script src="scripts/app.js"></script>
+</body>
+</html>
